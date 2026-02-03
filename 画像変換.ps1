@@ -105,52 +105,67 @@ $xaml = @"
                     ToolTip="クリックするたびに JPG / PNG が切り替わります。"/>
         </StackPanel>
 
-        <!-- 4. JPG / PNG 設定 -->
-        <StackPanel Grid.Row="3" Orientation="Vertical" Margin="0,0,0,8">
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                <Label Content="JPG 圧縮率 (1-100):"
-                       ToolTip="数値が大きいほど高画質・大きなファイルになります。"/>
-                <TextBox x:Name="JpgQualityBox" Width="60" Margin="5,0,0,0" Text="90"
-                         ToolTip="JPGの圧縮率を1〜100 の範囲で指定します。\n値が低いとファイルサイズは小さくなりますが、画質が荒くなります。"/>
+        <!-- 4. JPG / PNG 設定 + 右下進捗表示 -->
+        <Grid Grid.Row="3" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+        
+            <!-- 左側：JPG / PNG 設定 -->
+            <StackPanel Grid.Column="0" Orientation="Vertical">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <Label Content="JPG 圧縮率 (1-100):"
+                           ToolTip="数値が大きいほど高画質・大きなファイルになります。"/>
+                    <TextBox x:Name="JpgQualityBox" Width="60" Margin="5,0,0,0" Text="90"
+                             ToolTip="JPGの圧縮率を1〜100 の範囲で指定します。"/>
+                </StackPanel>
+        
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                    <Label Content="PNG 圧縮レベル:"
+                           ToolTip="大きいほど圧縮率が高く、変換に時間が掛かります。"/>
+                    <ComboBox x:Name="PngLevelBox"
+                              Width="60"
+                              Margin="5,0,15,0"
+                              IsEditable="False">
+                        <ComboBoxItem Content="0"/>
+                        <ComboBoxItem Content="1"/>
+                        <ComboBoxItem Content="2"/>
+                        <ComboBoxItem Content="3"/>
+                        <ComboBoxItem Content="4"/>
+                        <ComboBoxItem Content="5"/>
+                        <ComboBoxItem Content="6"/>
+                        <ComboBoxItem Content="7"/>
+                        <ComboBoxItem Content="8"/>
+                        <ComboBoxItem Content="9"/>
+                    </ComboBox>
+        
+                    <Label Content="PNG フィルター:"
+                           ToolTip="5 は各行ごとに最適なフィルターを自動選択します。"/>
+                    <ComboBox x:Name="PngFilterBox"
+                              Width="60"
+                              Margin="5,0,0,0"
+                              IsEditable="False">
+                        <ComboBoxItem Content="0"/>
+                        <ComboBoxItem Content="1"/>
+                        <ComboBoxItem Content="2"/>
+                        <ComboBoxItem Content="3"/>
+                        <ComboBoxItem Content="4"/>
+                        <ComboBoxItem Content="5"/>
+                    </ComboBox>
+                </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                <Label Content="PNG 圧縮レベル:"
-                       ToolTip="大きいほど圧縮率が高く、変換に時間が掛かります。"/>
-                <ComboBox x:Name="PngLevelBox"
-                          Width="60"
-                          Margin="5,0,15,0"
-                          IsEditable="False"
-                          ToolTip="0〜9 から選択します。">
-                    <ComboBoxItem Content="0"/>
-                    <ComboBoxItem Content="1"/>
-                    <ComboBoxItem Content="2"/>
-                    <ComboBoxItem Content="3"/>
-                    <ComboBoxItem Content="4"/>
-                    <ComboBoxItem Content="5"/>
-                    <ComboBoxItem Content="6"/>
-                    <ComboBoxItem Content="7"/>
-                    <ComboBoxItem Content="8"/>
-                    <ComboBoxItem Content="9"/>
-                </ComboBox>
-                <Label Content="PNG フィルター:"
-                       ToolTip="5 は各行ごとに最適なフィルターを自動選択します。"/>
-                <ComboBox x:Name="PngFilterBox"
-                          Width="60"
-                          Margin="5,0,0,0"
-                          IsEditable="False"
-                          ToolTip="0〜5 から選択します。">
-                    <ComboBoxItem Content="0"/>
-                    <ComboBoxItem Content="1"/>
-                    <ComboBoxItem Content="2"/>
-                    <ComboBoxItem Content="3"/>
-                    <ComboBoxItem Content="4"/>
-                    <ComboBoxItem Content="5"/>
-                </ComboBox>
-                        </StackPanel>
-        </StackPanel>
-
-        <!-- 5. 下部は空（全体ドロップ用） -->
-        <Grid Grid.Row="4"/>
+        
+            <!-- 右側：進捗表示 -->
+            <TextBlock Grid.Column="1"
+                       x:Name="ProgressText"
+                       Text="処理：0 / 入力：0"
+                       VerticalAlignment="Bottom"
+                       HorizontalAlignment="Right"
+                       Margin="10,0,0,0"
+                       FontSize="12"
+                       Foreground="Gray"/>
+        </Grid>
     </Grid>
 </Window>
 "@
@@ -168,6 +183,7 @@ $FormatButton    = $window.FindName('FormatButton')
 $JpgQualityBox   = $window.FindName('JpgQualityBox')
 $PngLevelBox     = $window.FindName('PngLevelBox')
 $PngFilterBox    = $window.FindName('PngFilterBox')
+$ProgressText   = $window.FindName('ProgressText')
 
 #=== 出力形式（内部状態） ===#
 $script:TargetFormat = 'jpg'   # 'jpg' or 'png'
@@ -237,6 +253,10 @@ function Start-ProcessDrop {
         [System.Windows.MessageBox]::Show('有効なファイルが見つかりませんでした。','情報')
         return
     }
+
+    $total = $files.Count
+    $done  = 0
+    $ProgressText.Text = "処理：0 / 入力：$total"
 
     # density 正規化
     $densityText = $DensityBox.Text
@@ -357,6 +377,11 @@ if ($p.ExitCode -eq 0) {
 } else {
     $failed++
 }
+$done++
+
+$window.Dispatcher.Invoke([Action]{
+    $ProgressText.Text = "処理：$done / 入力：$total"
+}, 'Background')
 
 }
 
