@@ -10,7 +10,7 @@ Windows 11 + PowerShell 7.5.4 で動作確認済みですが、5.1でも動作�
 ![MagickSimpleConvert](https://github.com/user-attachments/assets/c55025d6-340f-42d9-ac1e-8be44c08e482 "アプリウィンドウ")
 ---
 ## 本アプリはPowerShell と WPFで動作します、別途ランタイム等のインストールは必要ありません。
-ImageMagickをインストールし、コマンドから使用できるようにしてください。
+ImageMagickをインストールし、コマンドから使用できるようにしてください。  
 ImageMagickのmagick.exeと同じフォルダに配置しても動作します。
 
 ImageMagick を内部で利用し、  
@@ -109,3 +109,4 @@ ImageMagick のライセンスに従ってください。
 
 
 **Microsoft Copilot**  
+
