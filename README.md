@@ -1,14 +1,23 @@
 # MagickSimpleConvert
 
-**MagickSimpleConvert** は、Microsoft Copilot によって設計された  
-**JPG / PNG 専用の簡易画像変換ツール**です。
+当アプリは、ImageMagickのフロントエンドです。
+
+---
+## このアプリについて
+本アプリは **Microsoft Copilot によって作成された Copilot 製アプリ**です。  
+Windows 11 + PowerShell 7.5.4 で動作確認済みですが、5.1でも動作します。
+
+![MagickSimpleConvert](https://github.com/user-attachments/assets/c55025d6-340f-42d9-ac1e-8be44c08e482 "アプリウィンドウ")
+---
+## 本アプリはPowerShell と WPFで動作します、別途ランタイム等のインストールは必要ありません。
+ImageMagickをインストールし、コマンドから使用できるようにしてください。
 
 ImageMagick を内部で利用し、  
 「必要なことだけを確実に行う」という思想で構築されています。
 
-- JPG → PNG  
-- PNG → JPG  
-- SVG / PDF → PNG（高品質レンダリング対応）  
+- JPG → JPG/PNG  
+- PNG → JPG/JPG  
+- SVG / PDF → JPG/PNG（高品質レンダリング対応）  
 
 といった最小限かつ実用的な変換を高速に実行します。
 
