@@ -11,6 +11,7 @@ Windows 11 + PowerShell 7.5.4 で動作確認済みですが、5.1でも動作�
 ---
 ## 本アプリはPowerShell と WPFで動作します、別途ランタイム等のインストールは必要ありません。
 ImageMagickをインストールし、コマンドから使用できるようにしてください。
+ImageMagickのmagick.exeと同じフォルダに配置しても動作します。
 
 ImageMagick を内部で利用し、  
 「必要なことだけを確実に行う」という思想で構築されています。
@@ -105,5 +106,6 @@ ImageMagick のライセンスに従ってください。
 ---
 
 ## 📝 制作
+
 
 **Microsoft Copilot**  
